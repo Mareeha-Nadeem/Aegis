@@ -40,7 +40,7 @@ Aegis/
 │   └── documents/                   # Curated document corpus
 │
 ├── models/
-│   ├── setfit/                      # Saved SetFit model artefacts
+│   ├── setfit/                      # Saved SetFit model artifacts
 │   └── faiss_index/                 # FAISS vector index files
 │
 ├── notebooks/                       # Exploratory Jupyter notebooks

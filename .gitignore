@@ -36,7 +36,7 @@ ENV/
 .DS_Store
 Thumbs.db
 
-# Model artefacts (keep directory structure, ignore actual artefact files)
+# Model artifacts (keep directory structure, ignore actual artifact files)
 models/setfit/*
 !models/setfit/.gitkeep
 models/faiss_index/*
