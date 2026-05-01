@@ -77,11 +77,11 @@ python main.py
 
 ## Roadmap
 
-- [ ] Implement Layer 1 – Ingestion Guard
-- [ ] Implement Layer 2 – Chunk Classifier (SetFit)
-- [ ] Implement Layer 3 – Prompt Assembly
-- [ ] Implement Layer 4 – Output Validator
+- [ ] Implement Layer 1: Ingestion Guard
+- [ ] Implement Layer 2: Chunk Classifier (SetFit)
+- [ ] Fine-tune SetFit model on labelled chunk dataset
+- [ ] Implement Layer 3: Prompt Assembly
+- [ ] Implement Layer 4: Output Validator
 - [ ] Build FAISS vector store and RAG baseline
 - [ ] Assemble hardened RAG pipeline
-- [ ] Fine-tune SetFit model on labelled chunk dataset
 - [ ] Run evaluation harness and publish benchmark results
