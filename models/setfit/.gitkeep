@@ -1,0 +1,8 @@
+# models/setfit/
+#
+# Trained SetFit model artefacts.
+#
+# Stores the serialised weights, tokeniser config, and label mappings produced
+# by training/setfit_finetune.py.  The chunk classifier (layer2_chunk_classifier.py)
+# loads the model from this directory at startup to score retrieved chunks for
+# injection risk.

@@ -1,0 +1,8 @@
+# logs/
+#
+# Runtime log files.
+#
+# Rotating log files written by logging/logger.py are stored here.
+# Each pipeline run appends structured log entries (plain-text or JSON)
+# that capture ingestion decisions, chunk risk scores, prompt assembly
+# details, output validation results, and evaluation summaries.

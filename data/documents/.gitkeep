@@ -1,0 +1,7 @@
+# data/documents/
+#
+# Curated document store for the vector database.
+#
+# Holds the final, curated set of documents (or chunk metadata) that back
+# the FAISS vector index. The hardened RAG pipeline (rag_hardened.py)
+# retrieves candidate chunks from this collection at query time.
