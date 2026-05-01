@@ -1,0 +1,52 @@
+# .gitignore
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+*.whl
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Jupyter notebooks checkpoints
+.ipynb_checkpoints/
+
+# Environment / secrets
+.env
+*.env
+
+# Logs
+logs/
+*.log
+
+# Model artefacts and large binary files
+models/setfit/
+models/faiss_index/
+*.bin
+*.pt
+*.safetensors
+*.index
+
+# Raw and processed data
+data/raw/
+data/processed/
+data/documents/
+
+# OS artefacts
+.DS_Store
+Thumbs.db
+
+# IDE settings
+.idea/
+.vscode/
+*.swp
