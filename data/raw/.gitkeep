@@ -1,0 +1,8 @@
+# data/raw/
+#
+# Raw source documents (unprocessed).
+#
+# Place unprocessed source files here (PDFs, plain-text files, HTML exports, etc.).
+# The ingestion pipeline (layer1_ingestion_guard.py) reads from this directory,
+# screens each document for adversarial content, and writes clean output to
+# data/processed/.
