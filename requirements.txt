@@ -1,0 +1,33 @@
+# requirements.txt
+#
+# Project dependencies for Aegis.
+# Install with:  pip install -r requirements.txt
+#
+# Core ML / NLP
+# sentence-transformers
+# setfit
+# transformers
+# torch
+#
+# Vector store
+# faiss-cpu
+#
+# LLM / RAG
+# langchain
+# openai
+#
+# Data handling
+# pandas
+# numpy
+#
+# Evaluation & metrics
+# scikit-learn
+# rouge-score
+#
+# Utilities
+# python-dotenv
+# pydantic
+# tqdm
+#
+# Logging
+# structlog
