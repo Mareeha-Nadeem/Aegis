@@ -11,6 +11,7 @@ Large Language Models deployed in RAG architectures are vulnerable to indirect p
 ---
 
 ## System Architecture
+```
 ┌─────────────────────────────────────────────────────────┐
 │                     AEGIS PIPELINE                      │
 ├─────────────────────────────────────────────────────────┤
@@ -20,12 +21,11 @@ Large Language Models deployed in RAG architectures are vulnerable to indirect p
 ├─────────────────────────────────────────────────────────┤
 │  RETRIEVAL                                              │
 │  Query → Top-K Chunks → [Layer 2: Chunk Classifier]     │
-│                          SetFit · score_2 ∈ [0,1]      │
-│                                                         │
-│  combined = 0.4 × score_1 + 0.6 × score_2              │
-│  combined > 0.8 → DROP                                  │
-│  combined > 0.5 → DEMOTE  (weight = 0.3)                │
-│  combined ≤ 0.5 → ALLOW   (weight = 1.0)                │
+│          SetFit · score_2 ∈ [0,1]                       │
+│          combined = 0.4 × score_1 + 0.6 × score_2       │
+│          combined > 0.8 → DROP                          │
+│          combined > 0.5 → DEMOTE  (weight = 0.3)        │
+│          combined ≤ 0.5 → ALLOW   (weight = 1.0)        │
 ├─────────────────────────────────────────────────────────┤
 │  GENERATION                                             │
 │  [Layer 3: Prompt Assembly]                             │
@@ -39,7 +39,7 @@ Large Language Models deployed in RAG architectures are vulnerable to indirect p
 │  score_3 > 0.4 → WARN                                   │
 │  score_3 ≤ 0.4 → SAFE                                   │
 └─────────────────────────────────────────────────────────┘
-
+```
 ---
 
 ## Layer Specification
@@ -54,13 +54,14 @@ Large Language Models deployed in RAG architectures are vulnerable to indirect p
 ---
 
 ## Project Structure
+```
 Aegis/
 ├── config.py                         # Global runtime configuration
 ├── main.py                           # Entry point — serve / evaluate / train
 ├── requirements.txt                  # Pinned Python dependencies
 │
 ├── pipeline/
-│   ├── init.py
+│   ├── __init__.py
 │   ├── layer1_ingestion_guard.py     # DeBERTa-v3 injection scoring at ingestion
 │   ├── layer2_chunk_classifier.py    # SetFit chunk-level risk classification
 │   ├── layer3_prompt_assembly.py     # Hardened prompt construction with trust separation
@@ -76,7 +77,7 @@ Aegis/
 │   └── metrics.py                    # ASR, FPR, FNR, RAG Utility Score, latency
 │
 ├── data/
-│   ├── raw/                          # Raw source documents (unprocessed)
+│   ├── raw/                          # Raw source documents
 │   ├── processed/                    # Chunked and preprocessed documents
 │   └── documents/                    # Curated vector store document corpus
 │
@@ -87,7 +88,7 @@ Aegis/
 ├── notebooks/                        # Exploratory and experimental notebooks
 ├── tests/                            # Unit and integration test suite
 └── logs/                             # Structured runtime logs (JSONL)
-
+```
 ---
 
 ## Installation
