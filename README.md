@@ -6,7 +6,7 @@
 
 ## Overview
 
-Large Language Models deployed in RAG architectures are vulnerable to indirect prompt injection — adversarial instructions embedded within retrieved documents that hijack LLM behavior. Aegis addresses this by introducing a four-layer defense pipeline that intercepts, scores, and filters malicious context before it reaches the model, and validates generated outputs before they reach the user.
+Large Language Models deployed in RAG architectures are vulnerable to indirect prompt injection i.e. adversarial instructions embedded within retrieved documents that hijack LLM behavior. Aegis addresses this by introducing a four-layer defense pipeline that intercepts, scores, and filters malicious context before it reaches the model, and validates generated outputs before they reach the user.
 
 ---
 
@@ -51,44 +51,6 @@ Large Language Models deployed in RAG architectures are vulnerable to indirect p
 | 3 | Generation | Prompt Assembly | LangChain + Phi SLM | Structured hardened prompt |
 | 4 | Output | Output Validator | FAISS + `sentence-transformers` + cosine similarity | BLOCK / WARN / SAFE |
 
----
-
-## Project Structure
-```
-Aegis/
-├── config.py                         # Global runtime configuration
-├── main.py                           # Entry point — serve / evaluate / train
-├── requirements.txt                  # Pinned Python dependencies
-│
-├── pipeline/
-│   ├── __init__.py
-│   ├── layer1_ingestion_guard.py     # DeBERTa-v3 injection scoring at ingestion
-│   ├── layer2_chunk_classifier.py    # SetFit chunk-level risk classification
-│   ├── layer3_prompt_assembly.py     # Hardened prompt construction with trust separation
-│   ├── layer4_output_validator.py    # Leakage detection and semantic similarity validation
-│   ├── rag_baseline.py               # Unprotected vanilla RAG pipeline (eval baseline)
-│   └── rag_hardened.py               # Full Aegis-protected RAG pipeline
-│
-├── training/
-│   └── setfit_finetune.py            # SetFit fine-tuning on prompt injection dataset
-│
-├── evaluation/
-│   ├── eval_harness.py               # End-to-end evaluation orchestration
-│   └── metrics.py                    # ASR, FPR, FNR, RAG Utility Score, latency
-│
-├── data/
-│   ├── raw/                          # Raw source documents
-│   ├── processed/                    # Chunked and preprocessed documents
-│   └── documents/                    # Curated vector store document corpus
-│
-├── models/
-│   ├── setfit/                       # Fine-tuned SetFit model artifacts
-│   └── faiss_index/                  # Serialized FAISS vector index
-│
-├── notebooks/                        # Exploratory and experimental notebooks
-├── tests/                            # Unit and integration test suite
-└── logs/                             # Structured runtime logs (JSONL)
-```
 ---
 
 ## Installation
@@ -142,9 +104,9 @@ python main.py evaluate
 
 | Metric | Description |
 |--------|-------------|
-| **ASR** | Attack Success Rate — proportion of injections that reached the user |
-| **FPR** | False Positive Rate — legitimate queries incorrectly blocked |
-| **FNR** | False Negative Rate — attacks that bypassed all four layers |
+| **ASR** | Attack Success Rate: proportion of injections that reached the user |
+| **FPR** | False Positive Rate: legitimate queries incorrectly blocked |
+| **FNR** | False Negative Rate: attacks that bypassed all four layers |
 | **RAG Utility Score** | Answer quality on clean, non-adversarial queries |
 | **Latency Overhead** | Additional inference time introduced by the four-layer pipeline |
 | **Layer Attribution** | Per-layer breakdown of detected and blocked attacks |
