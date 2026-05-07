@@ -53,44 +53,6 @@ Large Language Models deployed in RAG architectures are vulnerable to indirect p
 
 ---
 
-## Project Structure
-```
-Aegis/
-├── config.py                         # Global runtime configuration
-├── main.py                           # Entry point — serve / evaluate / train
-├── requirements.txt                  # Pinned Python dependencies
-│
-├── pipeline/
-│   ├── __init__.py
-│   ├── layer1_ingestion_guard.py     # DeBERTa-v3 injection scoring at ingestion
-│   ├── layer2_chunk_classifier.py    # SetFit chunk-level risk classification
-│   ├── layer3_prompt_assembly.py     # Hardened prompt construction with trust separation
-│   ├── layer4_output_validator.py    # Leakage detection and semantic similarity validation
-│   ├── rag_baseline.py               # Unprotected vanilla RAG pipeline (eval baseline)
-│   └── rag_hardened.py               # Full Aegis-protected RAG pipeline
-│
-├── training/
-│   └── setfit_finetune.py            # SetFit fine-tuning on prompt injection dataset
-│
-├── evaluation/
-│   ├── eval_harness.py               # End-to-end evaluation orchestration
-│   └── metrics.py                    # ASR, FPR, FNR, RAG Utility Score, latency
-│
-├── data/
-│   ├── raw/                          # Raw source documents
-│   ├── processed/                    # Chunked and preprocessed documents
-│   └── documents/                    # Curated vector store document corpus
-│
-├── models/
-│   ├── setfit/                       # Fine-tuned SetFit model artifacts
-│   └── faiss_index/                  # Serialized FAISS vector index
-│
-├── notebooks/                        # Exploratory and experimental notebooks
-├── tests/                            # Unit and integration test suite
-└── logs/                             # Structured runtime logs (JSONL)
-```
----
-
 ## Installation
 
 ### Prerequisites
