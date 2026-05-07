@@ -6,7 +6,7 @@
 
 ## Overview
 
-Large Language Models deployed in RAG architectures are vulnerable to indirect prompt injection — adversarial instructions embedded within retrieved documents that hijack LLM behavior. Aegis addresses this by introducing a four-layer defense pipeline that intercepts, scores, and filters malicious context before it reaches the model, and validates generated outputs before they reach the user.
+Large Language Models deployed in RAG architectures are vulnerable to indirect prompt injection i.e. adversarial instructions embedded within retrieved documents that hijack LLM behavior. Aegis addresses this by introducing a four-layer defense pipeline that intercepts, scores, and filters malicious context before it reaches the model, and validates generated outputs before they reach the user.
 
 ---
 
@@ -104,9 +104,9 @@ python main.py evaluate
 
 | Metric | Description |
 |--------|-------------|
-| **ASR** | Attack Success Rate — proportion of injections that reached the user |
-| **FPR** | False Positive Rate — legitimate queries incorrectly blocked |
-| **FNR** | False Negative Rate — attacks that bypassed all four layers |
+| **ASR** | Attack Success Rate: proportion of injections that reached the user |
+| **FPR** | False Positive Rate: legitimate queries incorrectly blocked |
+| **FNR** | False Negative Rate: attacks that bypassed all four layers |
 | **RAG Utility Score** | Answer quality on clean, non-adversarial queries |
 | **Latency Overhead** | Additional inference time introduced by the four-layer pipeline |
 | **Layer Attribution** | Per-layer breakdown of detected and blocked attacks |
