@@ -51,3 +51,16 @@ Thumbs.db
 .idea/
 .vscode/
 *.swp
+
+# ignore actual data
+data/**/*.json
+data/**/*.pdf
+data/**/*.csv
+data/**/*.txt
+data/**/*.xlsx
+data/**/*.docx
+data/**/*.doc
+data/**/*.pptx
+
+# keep folders
+!data/**/.gitkeep
