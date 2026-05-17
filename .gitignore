@@ -42,7 +42,7 @@ models/faiss_index/
 data/raw/
 data/processed/
 data/documents/
-
+data/documents/Safe_Docs(Laiba)
 # OS artefacts
 .DS_Store
 Thumbs.db
