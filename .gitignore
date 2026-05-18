@@ -40,7 +40,7 @@ models/faiss_index/
 
 # Raw and processed data
 data/raw/
-data/processed/
+
 data/documents/
 data/documents/Safe_Docs(Laiba)
 # OS artefacts
@@ -53,14 +53,14 @@ Thumbs.db
 *.swp
 
 # ignore actual data
-data/**/*.json
-data/**/*.pdf
-data/**/*.csv
-data/**/*.txt
-data/**/*.xlsx
-data/**/*.docx
-data/**/*.doc
-data/**/*.pptx
+
+# data/**/*.pdf
+# data/**/*.csv
+# data/**/*.txt
+# data/**/*.xlsx
+# data/**/*.docx
+# data/**/*.doc
+# data/**/*.pptx
 
 # keep folders
 !data/**/.gitkeep
