@@ -1,0 +1,88 @@
+/* ============================================================
+   themes.css — Light & Dark Mode Overrides
+   Only theme-specific color overrides here.
+   ============================================================ */
+
+/* ---- DARK THEME (default, defined in root.css) ---- */
+[data-theme="dark"] {
+  color-scheme: dark;
+}
+
+/* ========================================================
+   LIGHT THEME — CYBER LUXE FUTURISTIC
+   Only colors changed — structure untouched
+   ======================================================== */
+
+[data-theme="light"] {
+  color-scheme: light;
+
+  /* Backgrounds */
+  --bg-primary:     #F6F8FF;
+  --bg-secondary:   #EEF3FF;
+  --bg-surface:     #FFFFFF;
+  --bg-elevated:    #F8FAFF;
+  --bg-overlay:     rgba(255, 255, 255, 0.82);
+
+  /* Text */
+  --text-primary:   #111827;
+  --text-secondary: #667085;
+  --text-muted:     #98A2B3;
+  --text-inverse:   #FFFFFF;
+
+  /* Primary Accent */
+  --accent:         #6D4AFF;
+  --accent-dim:     rgba(109, 74, 255, 0.10);
+  --accent-glow:    rgba(109, 74, 255, 0.18);
+  --accent-border:  rgba(109, 74, 255, 0.22);
+
+  /* Secondary Accent */
+  --secondary-accent: #00B8D9;
+
+  /* Warning */
+  --warning:        #9B7BFF;
+  --warning-dim:    rgba(155, 123, 255, 0.10);
+  --warning-glow:   rgba(155, 123, 255, 0.14);
+  --warning-border: rgba(155, 123, 255, 0.22);
+
+  /* Semantic */
+  --danger:         #EC4899;
+  --danger-dim:     rgba(236, 72, 153, 0.10);
+
+  --success:        #10B981;
+  --success-dim:    rgba(16, 185, 129, 0.10);
+
+  /* Borders */
+  --border:         rgba(17, 24, 39, 0.08);
+  --border-strong:  rgba(17, 24, 39, 0.14);
+
+  /* Shadows */
+  --shadow-sm:  0 2px 4px rgba(15, 23, 42, 0.04);
+  --shadow-md:  0 8px 24px rgba(15, 23, 42, 0.06);
+  --shadow-lg:  0 14px 40px rgba(15, 23, 42, 0.08);
+  --shadow-xl:  0 24px 80px rgba(15, 23, 42, 0.12);
+
+  /* Glow */
+  --glow-accent:
+    0 0 24px rgba(109, 74, 255, 0.12),
+    0 0 60px rgba(109, 74, 255, 0.04);
+
+  --glow-warning:
+    0 0 20px rgba(155, 123, 255, 0.12),
+    0 0 50px rgba(155, 123, 255, 0.04);
+
+  /* Chat Bubbles */
+  --bubble-user:    #EEF2FF;
+  --bubble-bot:     #FFFFFF;
+  --bubble-border:  rgba(17, 24, 39, 0.06);
+
+  /* Dynamic Model Colors */
+  --model-color:    var(--accent);
+  --model-dim:      var(--accent-dim);
+  --model-glow:     var(--accent-glow);
+  --model-border:   var(--accent-border);
+
+  /* Glass Effect */
+  --glass-bg:       rgba(255, 255, 255, 0.72);
+  --glass-border:   rgba(17, 24, 39, 0.08);
+  --glass-blur:     16px;
+}
