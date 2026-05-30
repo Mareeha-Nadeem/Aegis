@@ -1,134 +1,70 @@
-# Aegis
+# Getting Started with Create React App
 
-> A multi-layer adversarial defense framework for Retrieval-Augmented Generation (RAG) pipelines, designed to detect and neutralize indirect prompt injection attacks at ingestion, retrieval, generation, and output stages.
+This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
----
+## Available Scripts
 
-## Overview
+In the project directory, you can run:
 
-Large Language Models deployed in RAG architectures are vulnerable to indirect prompt injection i.e. adversarial instructions embedded within retrieved documents that hijack LLM behavior. Aegis addresses this by introducing a four-layer defense pipeline that intercepts, scores, and filters malicious context before it reaches the model, and validates generated outputs before they reach the user.
+### `npm start`
 
----
+Runs the app in the development mode.\
+Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
 
-## System Architecture
-```
-┌─────────────────────────────────────────────────────────┐
-│                     AEGIS PIPELINE                      │
-├─────────────────────────────────────────────────────────┤
-│  INGESTION                                              │
-│  Document → [Layer 1: Ingestion Guard] → FAISS Store    │
-│             DeBERTa-v3 · score_1 ∈ [0,1]               │
-├─────────────────────────────────────────────────────────┤
-│  RETRIEVAL                                              │
-│  Query → Top-K Chunks → [Layer 2: Chunk Classifier]     │
-│          SetFit · score_2 ∈ [0,1]                       │
-│          combined = 0.4 × score_1 + 0.6 × score_2       │
-│          combined > 0.8 → DROP                          │
-│          combined > 0.5 → DEMOTE  (weight = 0.3)        │
-│          combined ≤ 0.5 → ALLOW   (weight = 1.0)        │
-├─────────────────────────────────────────────────────────┤
-│  GENERATION                                             │
-│  [Layer 3: Prompt Assembly]                             │
-│  [SYSTEM] + [TRUSTED CONTEXT] +                         │
-│  [UNVERIFIED CONTEXT] + [USER QUERY] → Phi SLM          │
-├─────────────────────────────────────────────────────────┤
-│  VALIDATION                                             │
-│  [Layer 4: Output Validator]                            │
-│  Leakage Detection + Cosine Similarity                  │
-│  score_3 > 0.7 → BLOCK                                  │
-│  score_3 > 0.4 → WARN                                   │
-│  score_3 ≤ 0.4 → SAFE                                   │
-└─────────────────────────────────────────────────────────┘
-```
----
+The page will reload when you make changes.\
+You may also see any lint errors in the console.
 
-## Layer Specification
+### `npm test`
 
-| Layer | Stage | Component | Model / Tool | Output |
-|-------|-------|-----------|-------------|--------|
-| 1 | Ingestion | Ingestion Guard | `protectai/deberta-v3-base-prompt-injection-v2` | `score_1 ∈ [0,1]` |
-| 2 | Retrieval | Chunk Classifier | SetFit fine-tuned on `deepset/prompt-injections` | `score_2 ∈ [0,1]` |
-| 3 | Generation | Prompt Assembly | LangChain + Phi SLM | Structured hardened prompt |
-| 4 | Output | Output Validator | FAISS + `sentence-transformers` + cosine similarity | BLOCK / WARN / SAFE |
+Launches the test runner in the interactive watch mode.\
+See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
 
----
+### `npm run build`
 
-## Installation
+Builds the app for production to the `build` folder.\
+It correctly bundles React in production mode and optimizes the build for the best performance.
 
-### Prerequisites
+The build is minified and the filenames include the hashes.\
+Your app is ready to be deployed!
 
-| Requirement | Version |
-|-------------|---------|
-| Python | 3.11.x |
-| RAM | 16 GB recommended |
-| GPU | Optional (CPU inference supported) |
+See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
 
-### Setup
+### `npm run eject`
 
-```bash
-# Clone the repository
-git clone https://github.com/Mareeha-Nadeem/Aegis.git
-cd Aegis
+**Note: this is a one-way operation. Once you `eject`, you can't go back!**
 
-# Create and activate virtual environment
-py -3.11 -m venv rag_env
-rag_env\Scripts\activate        # Windows
-source rag_env/bin/activate     # Linux / macOS
+If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
 
-# Install PyTorch (CPU build)
-pip install torch==2.3.1 torchvision torchaudio \
-    --index-url https://download.pytorch.org/whl/cpu
+Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
 
-# Install remaining dependencies
-pip install -r requirements.txt
-```
+You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
 
----
+## Learn More
 
-## Usage
+You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
 
-```bash
-# Fine-tune the SetFit chunk-risk classifier
-python main.py train
+To learn React, check out the [React documentation](https://reactjs.org/).
 
-# Run the Aegis-hardened RAG service
-python main.py serve
+### Code Splitting
 
-# Execute the evaluation harness
-python main.py evaluate
-```
+This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
 
----
+### Analyzing the Bundle Size
 
-## Evaluation Metrics
+This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
 
-| Metric | Description |
-|--------|-------------|
-| **ASR** | Attack Success Rate: proportion of injections that reached the user |
-| **FPR** | False Positive Rate: legitimate queries incorrectly blocked |
-| **FNR** | False Negative Rate: attacks that bypassed all four layers |
-| **RAG Utility Score** | Answer quality on clean, non-adversarial queries |
-| **Latency Overhead** | Additional inference time introduced by the four-layer pipeline |
-| **Layer Attribution** | Per-layer breakdown of detected and blocked attacks |
+### Making a Progressive Web App
 
----
+This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
 
-## Tech Stack
+### Advanced Configuration
 
-| Category | Libraries |
-|----------|-----------|
-| ML Framework | PyTorch, HuggingFace Transformers |
-| NLP Models | DeBERTa-v3, SetFit, Phi SLM, sentence-transformers |
-| Vector Store | FAISS |
-| RAG Framework | LangChain |
-| Classical ML | scikit-learn |
-| Data | HuggingFace Datasets |
+This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
 
----
+### Deployment
 
-## Author
+This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
 
-**Mareeha Nadeem**  
- 
-[linkedin.com/in/mareeha-nadeem](https://linkedin.com/in/mareeha-nadeem) 
-[github.com/Mareeha-Nadeem](https://github.com/Mareeha-Nadeem)
+### `npm run build` fails to minify
+
+This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
