@@ -1,0 +1,7 @@
+# data/processed/
+#
+# Pre-processed / chunked documents.
+#
+# Contains documents that have been cleaned and split into chunks by the
+# ingestion pipeline. These chunks are ready to be embedded and indexed
+# into the FAISS vector store (models/faiss_index/).
