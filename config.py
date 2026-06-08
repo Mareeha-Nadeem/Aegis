@@ -1,5 +1,15 @@
 """
 config.py
+<<<<<<< HEAD
+
+Global Configuration.
+
+Centralises all runtime configuration for the Aegis system: model paths,
+FAISS index location, LLM endpoint settings, risk classification thresholds,
+chunk size, logging verbosity, and evaluation dataset paths. Values can be
+overridden via environment variables or a .env file.
+"""
+=======
 Global Configuration for Aegis.
 """
 
@@ -54,3 +64,4 @@ L4_WARN  = 0.05
 # ── Logging ───────────────────────────────────────────────
 LOGS_DIR  = BASE_DIR / "logs"
 LOG_LEVEL = "INFO"
+>>>>>>> 712ea001c4db72213d1f7679e9523872a5095070

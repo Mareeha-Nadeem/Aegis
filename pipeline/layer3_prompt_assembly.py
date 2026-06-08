@@ -3,6 +3,13 @@ pipeline/layer3_prompt_assembly.py
 
 Layer 3 – Prompt Assembly.
 
+<<<<<<< HEAD
+Assembles the final prompt sent to the LLM using only the chunks that
+passed the risk classification step. Applies structural guardrails and
+instruction hardening (e.g., role anchoring, context delimiting) to
+reduce the model's susceptibility to residual injection content.
+"""
+=======
 Two-axis safety gate:
     Axis 1 — Safety  : score_1  → DROP
     Axis 2 — Utility : relevance → DROP if below floor
@@ -235,3 +242,4 @@ def _no_context_prompt(query: str) -> str:
         "[USER QUESTION]",
         query.strip(),
     ])
+>>>>>>> 712ea001c4db72213d1f7679e9523872a5095070

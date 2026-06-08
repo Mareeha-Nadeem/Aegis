@@ -3,6 +3,13 @@ pipeline/rag_baseline.py
 
 Baseline RAG Pipeline (unprotected).
 
+<<<<<<< HEAD
+Implements a standard retrieval-augmented generation pipeline without any
+security layers. Used as a comparison baseline to measure the effectiveness
+of the Aegis defence layers against prompt injection and data exfiltration
+attacks.
+"""
+=======
 No security layers — raw retrieval directly to LLM.
 Used as comparison baseline against Aegis hardened pipeline.
 
@@ -161,3 +168,4 @@ def run_baseline_query(query: str) -> dict:
         "chunks":     len(chunks),
         "latency_ms": latency,
     }
+>>>>>>> 712ea001c4db72213d1f7679e9523872a5095070

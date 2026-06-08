@@ -3,6 +3,13 @@ pipeline/layer4_output_validator.py
 
 Layer 4 – Output Validator.
 
+<<<<<<< HEAD
+Validates the LLM's generated response before it is returned to the user.
+Checks for signs of successful prompt injection, data exfiltration patterns,
+policy violations, and unexpected instruction-following that deviates from
+the intended task.
+"""
+=======
 Validates LLM output against injection attack patterns using
 dual-centroid differential scoring.
 
@@ -239,3 +246,4 @@ def run_output_validator(
         "final_output": final_output,
         "log_record":   log_record,
     }
+>>>>>>> 712ea001c4db72213d1f7679e9523872a5095070

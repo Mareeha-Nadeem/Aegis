@@ -1,6 +1,15 @@
 """
 main.py
 
+<<<<<<< HEAD
+Application Entry Point.
+
+Parses command-line arguments and launches the appropriate mode:
+  - 'serve'    : starts the hardened RAG pipeline as an interactive service
+  - 'evaluate' : runs the evaluation harness against the benchmark suite
+  - 'train'    : fine-tunes the SetFit chunk classifier
+"""
+=======
 Aegis FastAPI Server.
 
 Endpoints:
@@ -110,3 +119,4 @@ def query(request: QueryRequest):
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
+>>>>>>> 712ea001c4db72213d1f7679e9523872a5095070

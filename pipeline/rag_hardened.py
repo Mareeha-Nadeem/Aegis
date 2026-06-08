@@ -1,6 +1,15 @@
 """
 pipeline/rag_hardened.py
 
+<<<<<<< HEAD
+Hardened RAG Pipeline (Aegis-protected).
+
+Implements the full Aegis RAG pipeline with all four security layers active:
+ingestion guard, chunk classifier, prompt assembly hardening, and output
+validation. Orchestrates the end-to-end secure retrieval-augmented generation
+flow.
+"""
+=======
 Aegis Hardened RAG Pipeline.
 
 Flow:
@@ -187,3 +196,4 @@ def run_hardened_query(query: str) -> dict:
         "dropped":     len(drop_log),
         "latency_ms":  latency,
     }
+>>>>>>> 712ea001c4db72213d1f7679e9523872a5095070

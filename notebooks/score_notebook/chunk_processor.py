@@ -101,7 +101,12 @@ class ChunkProcessor:
                 "chunk_index": chunk.get("chunk_index", None),
                 "total_chunks": chunk.get("total_chunks", None),
                 "text": chunk_text,
+<<<<<<< HEAD
+                "deberta_score": score,
+                "risk_level": self._classify_risk(score),
+=======
                 "score_1": score,
+>>>>>>> 712ea001c4db72213d1f7679e9523872a5095070
                 "timestamp": pd.Timestamp.now().isoformat()
             }
             metadata.append(metadata_entry)

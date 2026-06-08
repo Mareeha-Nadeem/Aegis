@@ -3,6 +3,13 @@ pipeline/layer1_ingestion_guard.py
 
 Layer 1 – Ingestion Guard.
 
+<<<<<<< HEAD
+Responsible for screening raw documents and data chunks at ingestion time.
+Detects and filters out potentially malicious or adversarial content
+(e.g., indirect prompt injection payloads, PII leakage triggers) before
+they are stored in the vector database or passed further downstream.
+"""
+=======
 Screens raw document chunks at ingestion time using a fine-tuned
 SetFit model. Assigns score_1 to each chunk and stores in FAISS
 with metadata.
@@ -158,3 +165,4 @@ def add_to_faiss_index(new_chunks: list[dict]) -> None:
         f"[Layer 1] {len(new_chunks)} chunks added to FAISS. "
         f"Total vectors: {index.ntotal}"
     )
+>>>>>>> 712ea001c4db72213d1f7679e9523872a5095070

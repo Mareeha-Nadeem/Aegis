@@ -1,0 +1,8 @@
+# models/faiss_index/
+#
+# FAISS vector index files.
+#
+# Contains the binary FAISS index (*.index) and associated document-ID mapping
+# built from the embeddings of chunks in data/documents/.  Both the baseline
+# (rag_baseline.py) and hardened (rag_hardened.py) pipelines perform
+# approximate-nearest-neighbour retrieval against this index.
