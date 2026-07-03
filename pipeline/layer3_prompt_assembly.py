@@ -20,6 +20,12 @@ Flow:
     [SYSTEM] + [TRUSTED CONTEXT] + [USER QUESTION]
           ↓
     LLM (Phi)
+
+CHANGES (v2):
+    - Return drop_ratio and max_score_1_dropped so Layer 4 can tighten
+      its thresholds when Layer 3 was already suspicious.
+    - Added drop_reason tracking to every drop_log entry for easier
+      downstream analysis.
 """
 
 
@@ -48,8 +54,8 @@ def classify_chunks(
     Two-axis gate — safety first, relevance second.
 
     Returns:
-        safe_chunks  : ALLOW — passed to LLM
-        drop_log     : list of drop records for logging/eval
+        safe_chunks : ALLOW — passed to LLM
+        drop_log    : list of drop records for logging/eval
     """
     safe_chunks = []
     drop_log    = []
@@ -67,6 +73,7 @@ def classify_chunks(
                 "score_1":         score_1,
                 "relevance_score": relevance,
                 "rule_triggered":  "score_1 > THRESHOLD_DROP",
+                "drop_reason":     "safety",          # NEW: explicit reason tag
                 "layer":           "L3",
                 "timestamp":       datetime.utcnow().isoformat(),
             })
@@ -83,6 +90,7 @@ def classify_chunks(
                 "score_1":         score_1,
                 "relevance_score": relevance,
                 "rule_triggered":  "score_1 > THRESHOLD_DEMOTE",
+                "drop_reason":     "demote",          # NEW: explicit reason tag
                 "layer":           "L3",
                 "timestamp":       datetime.utcnow().isoformat(),
             })
@@ -99,6 +107,7 @@ def classify_chunks(
                 "score_1":         score_1,
                 "relevance_score": relevance,
                 "rule_triggered":  "relevance < RELEVANCE_FLOOR",
+                "drop_reason":     "irrelevant",      # NEW: explicit reason tag
                 "layer":           "L3",
                 "timestamp":       datetime.utcnow().isoformat(),
             })
@@ -121,14 +130,15 @@ def classify_chunks(
             f"score_1={score_1:.4f} | relevance={relevance:.4f}"
         )
 
+    n_safety    = sum(1 for d in drop_log if d["drop_reason"] == "safety")
+    n_demote    = sum(1 for d in drop_log if d["drop_reason"] == "demote")
+    n_irrelevant= sum(1 for d in drop_log if d["drop_reason"] == "irrelevant")
+
     logger.info(
         f"[Layer 3] Gate results — "
         f"ALLOW: {len(safe_chunks)} | "
         f"DROPPED: {len(drop_log)} | "
-        f"DROP breakdown: "
-        f"{sum(1 for d in drop_log if 'DROP' in d['rule_triggered'] and 'DEMOTE' not in d['rule_triggered'])} safety | "
-        f"{sum(1 for d in drop_log if 'DEMOTE' in d['rule_triggered'])} demote | "
-        f"{sum(1 for d in drop_log if 'relevance' in d['rule_triggered'])} irrelevant"
+        f"DROP breakdown: {n_safety} safety | {n_demote} demote | {n_irrelevant} irrelevant"
     )
 
     return safe_chunks, drop_log
@@ -183,29 +193,58 @@ def run_prompt_assembly(query: str, reranked_chunks: list[dict]) -> dict:
 
     Returns:
         dict:
-            prompt       : assembled prompt string for LLM
-            safe_chunks  : ALLOW chunks passed to LLM
-            drop_log     : list of drop records for logging/eval
-            has_context  : False if no chunks passed filtering
+            prompt              : assembled prompt string for LLM
+            safe_chunks         : ALLOW chunks passed to LLM
+            drop_log            : list of drop records for logging/eval
+            has_context         : False if no chunks passed filtering
+            drop_ratio          : fraction of input chunks that were dropped
+                                  → passed to Layer 4 to tighten thresholds
+                                    when Layer 3 was already suspicious
+            max_score_1_dropped : highest score_1 seen among dropped chunks
+                                  → a high value means a very suspicious chunk
+                                    was present, even if it was caught
     """
     if not reranked_chunks:
         logger.warning("[Layer 3] No chunks received from Layer 2.")
         return {
-            "prompt":      _no_context_prompt(query),
-            "safe_chunks": [],
-            "drop_log":    [],
-            "has_context": False,
+            "prompt":               _no_context_prompt(query),
+            "safe_chunks":          [],
+            "drop_log":             [],
+            "has_context":          False,
+            "drop_ratio":           0.0,   # NEW
+            "max_score_1_dropped":  0.0,   # NEW
         }
 
     safe_chunks, drop_log = classify_chunks(reranked_chunks, query)
 
+    # ── NEW: compute suspicion signals for Layer 4 ────────
+    n_total    = len(reranked_chunks)
+    drop_ratio = len(drop_log) / n_total  # 0.0 → nothing dropped, 1.0 → all dropped
+
+    # Highest score_1 among safety/demote drops only (not irrelevant drops —
+    # those are low-signal noise, not injections).
+    safety_drops = [
+        d["score_1"] for d in drop_log
+        if d["drop_reason"] in ("safety", "demote")
+    ]
+    max_score_1_dropped = max(safety_drops, default=0.0)
+
+    logger.info(
+        f"[Layer 3] Suspicion signals — "
+        f"drop_ratio={drop_ratio:.3f} | "
+        f"max_score_1_dropped={max_score_1_dropped:.4f}"
+    )
+    # ──────────────────────────────────────────────────────
+
     if not safe_chunks:
         logger.warning("[Layer 3] All chunks dropped — no context for LLM.")
         return {
-            "prompt":      _no_context_prompt(query),
-            "safe_chunks": [],
-            "drop_log":    drop_log,
-            "has_context": False,
+            "prompt":               _no_context_prompt(query),
+            "safe_chunks":          [],
+            "drop_log":             drop_log,
+            "has_context":          False,
+            "drop_ratio":           drop_ratio,           # NEW
+            "max_score_1_dropped":  max_score_1_dropped,  # NEW
         }
 
     prompt = assemble_prompt(query, safe_chunks)
@@ -216,10 +255,12 @@ def run_prompt_assembly(query: str, reranked_chunks: list[dict]) -> dict:
     )
 
     return {
-        "prompt":      prompt,
-        "safe_chunks": safe_chunks,
-        "drop_log":    drop_log,
-        "has_context": True,
+        "prompt":               prompt,
+        "safe_chunks":          safe_chunks,
+        "drop_log":             drop_log,
+        "has_context":          True,
+        "drop_ratio":           drop_ratio,           # NEW
+        "max_score_1_dropped":  max_score_1_dropped,  # NEW
     }
 
 

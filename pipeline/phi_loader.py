@@ -57,7 +57,7 @@ def warm_llm_async() -> None:
 
 
 def get_phi():
-    """Backward-compatible alias for `get_llm()` (kept to avoid refactors)."""
+    """Backward-compatible alias for `get_llm()`."""
     return get_llm()
 
 
@@ -68,7 +68,6 @@ def get_llm():
         if llm_is_ready():
             return _llm_model, _llm_tokenizer
 
-        # If another thread is already loading, wait for it.
         if _llm_loading:
             event = _llm_loaded_event
         else:
@@ -82,18 +81,18 @@ def get_llm():
             return _llm_model, _llm_tokenizer
         raise RuntimeError(_llm_load_error or "LLM failed to load")
 
-    # This thread is responsible for loading.
     try:
-        has_cuda = torch.cuda.is_available()
-        device_map = "auto" if has_cuda else "cpu"
+        has_cuda    = torch.cuda.is_available()
+        device_map  = "auto" if has_cuda else "cpu"
         torch_dtype = torch.float16 if has_cuda else torch.float32
 
         logger.info(
-            f"[LLM] Loading model: {PHI_MODEL} | device_map={device_map} | dtype={torch_dtype}"
+            f"[LLM] Loading model: {PHI_MODEL} | "
+            f"device={'GPU' if has_cuda else 'CPU'} | dtype={torch_dtype}"
         )
 
         tokenizer = AutoTokenizer.from_pretrained(PHI_MODEL, use_fast=True)
-        model = AutoModelForCausalLM.from_pretrained(
+        model     = AutoModelForCausalLM.from_pretrained(
             PHI_MODEL,
             torch_dtype=torch_dtype,
             device_map=device_map,
@@ -105,11 +104,14 @@ def get_llm():
             tokenizer.pad_token_id = tokenizer.eos_token_id
 
         with _llm_lock:
-            _llm_model = model
-            _llm_tokenizer = tokenizer
+            _llm_model              = model
+            _llm_tokenizer          = tokenizer
             globals()["_llm_load_error"] = None
 
-        logger.info("[LLM] Model loaded.")
+        logger.info(
+            f"[LLM] Model loaded — "
+            f"{'GPU ✓' if has_cuda else 'CPU (truncation active, expect ~10-20s/query)'}"
+        )
         return _llm_model, _llm_tokenizer
 
     except Exception as e:
@@ -123,28 +125,60 @@ def get_llm():
             _llm_loaded_event.set()
 
 
+# ── Max input tokens — tune down on CPU to reduce latency ─
+# GPU: 2048 is fine. CPU: 512 keeps latency ~10-20s.
+_MAX_INPUT_TOKENS = 512
+
+
 def call_llm(prompt: str) -> str:
-    """Generate response using the configured instruct model."""
+    """
+    Generate a response using the configured instruct model.
+
+    CPU note: input is hard-truncated to _MAX_INPUT_TOKENS to keep
+    latency manageable. Qwen2.5-0.5B on CPU at float32 does roughly
+    3-5 tokens/sec; truncation is the main lever available without GPU.
+    """
     model, tokenizer = get_llm()
+
+    has_cuda = torch.cuda.is_available()
+    max_input = None if has_cuda else _MAX_INPUT_TOKENS
 
     try:
         with torch.inference_mode():
-            inputs = tokenizer(prompt, return_tensors="pt")
+            # ── Tokenize ──────────────────────────────────
+            if max_input is not None:
+                inputs = tokenizer(
+                    prompt,
+                    return_tensors="pt",
+                    truncation=True,
+                    max_length=max_input,
+                )
+                if inputs["input_ids"].shape[1] == max_input:
+                    logger.warning(
+                        f"[LLM] Prompt truncated to {max_input} tokens (CPU mode). "
+                        "Context may be incomplete."
+                    )
+            else:
+                inputs = tokenizer(prompt, return_tensors="pt")
+
             device = next(model.parameters()).device
             inputs = {k: v.to(device) for k, v in inputs.items()}
 
+            # ── Generate ───────────────────────────────────
             outputs = model.generate(
                 **inputs,
                 max_new_tokens=MAX_NEW_TOKENS,
                 do_sample=False,
+                use_cache=True,
                 pad_token_id=tokenizer.pad_token_id,
                 eos_token_id=tokenizer.eos_token_id,
             )
 
-        # Return only the continuation (not the echoed prompt).
+        # Return only the new tokens, not the echoed prompt
         prompt_len = inputs["input_ids"].shape[1]
-        generated = outputs[0][prompt_len:]
+        generated  = outputs[0][prompt_len:]
         return tokenizer.decode(generated, skip_special_tokens=True).strip()
+
     except Exception as e:
         logger.error(f"[LLM] Generation failed: {e}")
         return ""

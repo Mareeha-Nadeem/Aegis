@@ -51,6 +51,7 @@ Thumbs.db
 .idea/
 .vscode/
 *.swp
+frontend/node_modules/
 
 # ignore actual data
 

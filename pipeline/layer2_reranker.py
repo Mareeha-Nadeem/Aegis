@@ -10,7 +10,7 @@ This module is kept for backward compatibility with notebooks/scripts
 that still import `rerank_chunks`.
 
 Flow:
-    FAISS top-30 chunks
+    FAISS top-12 chunks
           ↓
     Normalize FAISS distances (per query)
           ↓

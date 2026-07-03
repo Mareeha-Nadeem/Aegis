@@ -25,19 +25,19 @@ PHI_MODEL           = "Qwen/Qwen2.5-0.5B-Instruct"
 
 # ── LLM generation ───────────────────────────────────────
 # Keep defaults conservative for CPU-only environments.
-MAX_NEW_TOKENS      = 192
+MAX_NEW_TOKENS      = 512
 
 # ── Chunking ──────────────────────────────────────────────
-CHUNK_SIZE    = 250
-CHUNK_OVERLAP = 60
+CHUNK_SIZE = 500
+CHUNK_OVERLAP = 100
 
 # ── FAISS retrieval ───────────────────────────────────────
-TOP_K = 30
+TOP_K = 12
 
 # ── Reranker ──────────────────────────────────────────────
 RERANK_TOP_K      = 5
 RERANK_TOP_K_MAX  = 8
-RERANK_BATCH_SIZE = 16
+RERANK_BATCH_SIZE = 12
 
 # ── Layer 3 thresholds ────────────────────────────────────
 THRESHOLD_DROP   = 0.8
